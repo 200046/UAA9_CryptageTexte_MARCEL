@@ -1,335 +1,221 @@
 ﻿using System;
 
+/// <summary>
+/// Programme principal pour l'application de cryptage
+/// Auteur: VotreNom
+/// Date: 06/06/2025
+/// Gère uniquement l'affichage et les interactions avec l'utilisateur
+/// </summary>
 class Program
 {
+    // Variable pour stocker le pseudo de l'utilisateur
+    private static string pseudoUtilisateur = "";
+
+    /// <summary>
+    /// Point d'entrée du programme
+    /// </summary>
     static void Main(string[] args)
     {
-        // On affiche le titre de l'application
+        // On affiche le titre
         AfficherTitre();
 
-        // On demande le pseudo de l'utilisateur
-        string pseudo = DemanderPseudo();
-        Console.WriteLine("\nBienvenue " + pseudo + " !");
-
-        // Variable pour savoir si on continue
-        bool continuer = true;
+        // On demande le pseudo
+        pseudoUtilisateur = DemanderPseudo();
+        Console.WriteLine("Bienvenue " + pseudoUtilisateur + " !");
 
         // Boucle principale du programme
+        bool continuer = true;
         while (continuer == true)
         {
-            continuer = TraiterMenuPrincipal();
+            continuer = AfficherMenuEtTraiter();
 
-            // Si l'utilisateur n'a pas choisi de quitter, on demande s'il veut continuer
+            // Si on continue, on demande si l'utilisateur veut faire autre chose
             if (continuer == true)
             {
-                continuer = DemanderContinuer();
+                continuer = DemanderSiContinuer();
             }
         }
 
         // Message de fin
-        AfficherMessageFin(pseudo);
+        AfficherMessageFin();
     }
 
     /// <summary>
-    /// Affiche le titre de l'application.
+    /// Affiche le titre de l'application
     /// </summary>
     private static void AfficherTitre()
     {
-        Console.WriteLine("=== APPLICATION DE CRYPTAGE ===");
-        Console.WriteLine("===============================");
+        Console.WriteLine("================================");
+        Console.WriteLine("   APPLICATION DE CRYPTAGE");
+        Console.WriteLine("================================");
     }
 
     /// <summary>
-    /// Demande et récupère le pseudo de l'utilisateur.
+    /// Demande le pseudo à l'utilisateur
     /// </summary>
-    /// <returns>Le pseudo saisi par l'utilisateur</returns>
+    /// <returns>Le pseudo saisi</returns>
     private static string DemanderPseudo()
     {
         Console.Write("\nEntrez votre pseudo : ");
         string pseudo = Console.ReadLine();
+
+        // Si l'utilisateur n'a rien tapé, on met un pseudo par défaut
+        if (pseudo == null || pseudo == "")
+        {
+            pseudo = "Utilisateur";
+        }
+
         return pseudo;
     }
 
     /// <summary>
-    /// Affiche le menu principal et traite le choix de l'utilisateur.
+    /// Affiche le menu principal et traite le choix de l'utilisateur
     /// </summary>
-    /// <returns>True si l'utilisateur veut continuer, False s'il veut quitter</returns>
-    private static bool TraiterMenuPrincipal()
+    /// <returns>True si on continue le programme, False si on quitte</returns>
+    private static bool AfficherMenuEtTraiter()
     {
-        // On affiche le menu
-        AfficherMenuPrincipal();
+        // Affichage du menu
+        Console.WriteLine("\n--- MENU PRINCIPAL ---");
+        Console.WriteLine("1. Crypter un texte");
+        Console.WriteLine("2. Décrypter un texte");
+        Console.WriteLine("3. Quitter le programme");
+        Console.Write("\nVotre choix (1, 2 ou 3) : ");
 
-        // On lit le choix de l'utilisateur
+        // Lecture du choix
         string choix = Console.ReadLine();
 
-        // On traite le choix
+        // Traitement du choix
         if (choix == "1")
         {
-            TraiterOperationCryptage(true); // true = cryptage
-            return true;
+            FaireCryptage();
+            return true; // On continue
         }
         else if (choix == "2")
         {
-            TraiterOperationCryptage(false); // false = décryptage
-            return true;
+            FaireDecryptage();
+            return true; // On continue
         }
         else if (choix == "3")
         {
-            return false; // L'utilisateur veut quitter
+            return false; // On arrête
         }
         else
         {
-            Console.WriteLine("Choix invalide !");
-            return true;
+            Console.WriteLine("ERREUR : Choisissez 1, 2 ou 3 !");
+            return true; // On continue
         }
     }
 
     /// <summary>
-    /// Affiche le menu principal avec les options disponibles.
+    /// Gère le cryptage d'un texte
     /// </summary>
-    private static void AfficherMenuPrincipal()
+    private static void FaireCryptage()
     {
-        Console.WriteLine("\nMENU PRINCIPAL :");
-        Console.WriteLine("1. Crypter un texte");
-        Console.WriteLine("2. Décrypter un texte");
-        Console.WriteLine("3. Quitter");
-        Console.Write("\nVotre choix (1-3) : ");
-    }
+        Console.WriteLine("\n=== CRYPTAGE ===");
 
-    /// <summary>
-    /// Traite une opération de cryptage ou décryptage.
-    /// </summary>
-    /// <param name="estCryptage">True pour crypter, False pour décrypter</param>
-    private static void TraiterOperationCryptage(bool estCryptage)
-    {
-        // On affiche le titre de l'opération
-        AfficherTitreOperation(estCryptage);
+        // On demande le texte (maintenant dans Fonctions.cs)
+        string texte = Fonctions.DemanderTexte("à crypter");
 
-        // On demande le texte à traiter
-        string texte = DemanderTexte(estCryptage);
+        // On demande la méthode (maintenant dans Fonctions.cs)
+        string methode = Fonctions.DemanderMethode();
 
-        // On demande la méthode
-        string methode = DemanderMethode();
+        // On fait le cryptage selon la méthode
+        string resultat = "";
 
-        // On exécute l'opération
-        string resultat = ExecuterOperation(texte, methode, estCryptage);
-
-        // Si on a un résultat, on l'affiche
-        if (resultat != "")
-        {
-            AfficherResultat(resultat, estCryptage);
-        }
-    }
-
-    /// <summary>
-    /// Affiche le titre de l'opération en cours.
-    /// </summary>
-    /// <param name="estCryptage">True pour cryptage, False pour décryptage</param>
-    private static void AfficherTitreOperation(bool estCryptage)
-    {
-        if (estCryptage == true)
-        {
-            Console.WriteLine("\n=== CRYPTAGE ===");
-        }
-        else
-        {
-            Console.WriteLine("\n=== DÉCRYPTAGE ===");
-        }
-    }
-
-    /// <summary>
-    /// Demande et valide le texte à traiter.
-    /// </summary>
-    /// <param name="estCryptage">True pour cryptage, False pour décryptage</param>
-    /// <returns>Le texte saisi par l'utilisateur</returns>
-    private static string DemanderTexte(bool estCryptage)
-    {
-        string texte = "";
-
-        // On répète tant que le texte est vide
-        while (texte == "")
-        {
-            // On affiche le message selon l'opération
-            if (estCryptage == true)
-            {
-                Console.Write("\nEntrez le texte à crypter : ");
-            }
-            else
-            {
-                Console.Write("\nEntrez le texte à décrypter : ");
-            }
-
-            texte = Console.ReadLine();
-
-            // Si le texte est vide, on affiche une erreur
-            if (texte == "")
-            {
-                Console.WriteLine("Erreur : le texte ne peut pas être vide !");
-            }
-        }
-
-        return texte;
-    }
-
-    /// <summary>
-    /// Demande à l'utilisateur de choisir une méthode de cryptage.
-    /// </summary>
-    /// <returns>Le numéro de la méthode choisie</returns>
-    private static string DemanderMethode()
-    {
-        Console.WriteLine("\nMéthodes disponibles :");
-        Console.WriteLine("1. Vigenère");
-        Console.WriteLine("2. Polybe");
-        Console.WriteLine("3. Bazeries");
-        Console.Write("\nChoisissez une méthode (1-3) : ");
-
-        string methode = Console.ReadLine();
-        return methode;
-    }
-
-    /// <summary>
-    /// Exécute l'opération de cryptage/décryptage selon la méthode choisie.
-    /// </summary>
-    /// <param name="texte">Le texte à traiter</param>
-    /// <param name="methode">La méthode choisie (1, 2 ou 3)</param>
-    /// <param name="estCryptage">True pour crypter, False pour décrypter</param>
-    /// <returns>Le résultat de l'opération ou une chaîne vide en cas d'erreur</returns>
-    private static string ExecuterOperation(string texte, string methode, bool estCryptage)
-    {
         if (methode == "1")
         {
-            return TraiterVigenere(texte, estCryptage);
+            string cle = Fonctions.DemanderCleVigenere(texte);
+            resultat = Fonctions.CrypterVigenere(texte, cle);
         }
         else if (methode == "2")
         {
-            return TraiterPolybe(texte, estCryptage);
+            resultat = Fonctions.CrypterPolybe(texte);
         }
         else if (methode == "3")
         {
-            return TraiterBazeries(texte, estCryptage);
+            int cle = Fonctions.DemanderCleNumerique(texte);
+            resultat = Fonctions.CrypterBazeries(texte, cle);
         }
-        else
-        {
-            Console.WriteLine("Méthode invalide !");
-            return "";
-        }
+
+        // On affiche le résultat
+        AfficherResultat(resultat, true);
     }
 
     /// <summary>
-    /// Traite l'opération avec la méthode Vigenère.
+    /// Gère le décryptage d'un texte
     /// </summary>
-    /// <param name="texte">Le texte à traiter</param>
-    /// <param name="estCryptage">True pour crypter, False pour décrypter</param>
-    /// <returns>Le résultat de l'opération</returns>
-    private static string TraiterVigenere(string texte, bool estCryptage)
+    private static void FaireDecryptage()
     {
-        Console.Write("\nEntrez la clé (un mot) : ");
-        string cle = Console.ReadLine();
+        Console.WriteLine("\n=== DÉCRYPTAGE ===");
 
+        // On demande le texte (maintenant dans Fonctions.cs)
+        string texte = Fonctions.DemanderTexte("à décrypter");
+
+        // On demande la méthode (maintenant dans Fonctions.cs)
+        string methode = Fonctions.DemanderMethode();
+
+        // On fait le décryptage selon la méthode
         string resultat = "";
 
-        if (estCryptage == true)
+        if (methode == "1")
         {
-            resultat = Fonctions.CrypterVigenere(texte, cle);
-        }
-        else
-        {
+            string cle = Fonctions.DemanderCleVigenere(texte);
             resultat = Fonctions.DecrypterVigenere(texte, cle);
         }
-
-        return resultat;
-    }
-
-    /// <summary>
-    /// Traite l'opération avec la méthode Polybe.
-    /// </summary>
-    /// <param name="texte">Le texte à traiter</param>
-    /// <param name="estCryptage">True pour crypter, False pour décrypter</param>
-    /// <returns>Le résultat de l'opération</returns>
-    private static string TraiterPolybe(string texte, bool estCryptage)
-    {
-        string resultat = "";
-
-        if (estCryptage == true)
-        {
-            resultat = Fonctions.CrypterPolybe(texte);
-        }
-        else
+        else if (methode == "2")
         {
             resultat = Fonctions.DecrypterPolybe(texte);
         }
-
-        return resultat;
-    }
-
-    /// <summary>
-    /// Traite l'opération avec la méthode Bazeries.
-    /// </summary>
-    /// <param name="texte">Le texte à traiter</param>
-    /// <param name="estCryptage">True pour crypter, False pour décrypter</param>
-    /// <returns>Le résultat de l'opération</returns>
-    private static string TraiterBazeries(string texte, bool estCryptage)
-    {
-        Console.Write("\nEntrez la clé (un nombre) : ");
-        string cleTexte = Console.ReadLine();
-
-        // On vérifie que c'est bien un nombre
-        int cle = 0;
-        bool nombreValide = int.TryParse(cleTexte, out cle);
-
-        // On répète tant que ce n'est pas un nombre valide
-        while (nombreValide == false)
+        else if (methode == "3")
         {
-            Console.Write("Erreur : entrez un nombre valide : ");
-            cleTexte = Console.ReadLine();
-            nombreValide = int.TryParse(cleTexte, out cle);
-        }
-
-        string resultat = "";
-
-        if (estCryptage == true)
-        {
-            resultat = Fonctions.CrypterBazeries(texte, cle);
-        }
-        else
-        {
+            int cle = Fonctions.DemanderCleNumerique(texte);
             resultat = Fonctions.DecrypterBazeries(texte, cle);
         }
 
-        return resultat;
+        // On affiche le résultat
+        AfficherResultat(resultat, false);
     }
 
     /// <summary>
-    /// Affiche le résultat de l'opération.
+    /// Affiche le résultat d'une opération
     /// </summary>
     /// <param name="resultat">Le résultat à afficher</param>
-    /// <param name="estCryptage">True pour cryptage, False pour décryptage</param>
+    /// <param name="estCryptage">True si c'est un cryptage, False si c'est un décryptage</param>
     private static void AfficherResultat(string resultat, bool estCryptage)
     {
         Console.WriteLine("\n=== RÉSULTAT ===");
 
-        if (estCryptage == true)
+        // Si c'est une erreur (commence par "ERREUR")
+        if (resultat.StartsWith("ERREUR"))
         {
-            Console.WriteLine("Texte crypté : ");
+            Console.WriteLine(resultat);
         }
         else
         {
-            Console.WriteLine("Texte décrypté : ");
-        }
+            // Affichage normal
+            if (estCryptage == true)
+            {
+                Console.WriteLine("Texte crypté :");
+            }
+            else
+            {
+                Console.WriteLine("Texte décrypté :");
+            }
 
-        Console.WriteLine(resultat);
+            Console.WriteLine(resultat);
+        }
     }
 
     /// <summary>
-    /// Demande à l'utilisateur s'il veut continuer.
+    /// Demande à l'utilisateur s'il veut continuer
     /// </summary>
     /// <returns>True si l'utilisateur veut continuer, False sinon</returns>
-    private static bool DemanderContinuer()
+    private static bool DemanderSiContinuer()
     {
-        Console.Write("\nVoulez-vous faire une autre opération ? (o/n) : ");
+        Console.Write("\nVoulez-vous faire autre chose ? (o/n) : ");
         string reponse = Console.ReadLine();
 
-        if (reponse == "o" || reponse == "O")
+        if (reponse == "o" || reponse == "O" || reponse == "oui" || reponse == "OUI")
         {
             return true;
         }
@@ -340,11 +226,16 @@ class Program
     }
 
     /// <summary>
-    /// Affiche le message de fin de l'application.
+    /// Affiche le message de fin du programme
     /// </summary>
-    /// <param name="pseudo">Le pseudo de l'utilisateur</param>
-    private static void AfficherMessageFin(string pseudo)
+    private static void AfficherMessageFin()
     {
-        Console.WriteLine("\nMerci " + pseudo + " d'avoir utilisé notre application !");
+        Console.WriteLine("\n================================");
+        Console.WriteLine("Merci " + pseudoUtilisateur + " d'avoir utilisé notre application !");
+        Console.WriteLine("À bientôt !");
+        Console.WriteLine("================================");
+
+        Console.WriteLine("\nAppuyez sur une touche pour fermer...");
+        Console.ReadKey();
     }
 }
