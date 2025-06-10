@@ -2,7 +2,7 @@
 
 /// <summary>
 /// Programme principal pour l'application de cryptage
-/// Auteur: VotreNom
+/// Auteur: TASNIER MARCEL
 /// Date: 06/06/2025
 /// Gère uniquement l'affichage et les interactions avec l'utilisateur
 /// </summary>
